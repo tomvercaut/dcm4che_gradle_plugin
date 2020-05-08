@@ -5,6 +5,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Dcm4cheProcessing extends DefaultTask {
@@ -22,7 +23,7 @@ public class Dcm4cheProcessing extends DefaultTask {
         }
     }
 
-    private void git_clone() throws IOException, InterruptedException {
+    private Path git_clone() throws IOException, InterruptedException {
         System.out.println("Cloning dcm4che project");
         var version = getProject().property("version");
         var buildDir = this.getProject().getBuildDir();
@@ -44,6 +45,17 @@ public class Dcm4cheProcessing extends DefaultTask {
         rv = checkoutProcess.waitFor();
         if (rv != 0) {
             throw new RuntimeException("git checkout exit code: " +rv);
+        }
+        return dcmSrcDir;
+    }
+
+    private void mvn_install(Path p) throws IOException, InterruptedException {
+        ProcessBuilder mvnBuilder = new ProcessBuilder("mvn", "install");
+        mvnBuilder.directory(p.toFile());
+        var checkoutProcess = mvnBuilder.start();
+        int rv = checkoutProcess.waitFor();
+        if (rv != 0) {
+            throw new RuntimeException("mvn install exit code: " +rv);
         }
     }
 }
