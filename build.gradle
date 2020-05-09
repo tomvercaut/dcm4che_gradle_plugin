@@ -12,10 +12,24 @@ repositories {
 
 ext {
     junitVersion = "5.6.0"
+    log4jVersion = "2.11.1"
+    lombokVersion = "1.18.12"
+    commonsIoVersion = "2.6"
+    commonsLangVersion = "3.10"
+    mavenInvokerVersion = "3.0.1"
 }
 
 dependencies {
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    compile "org.apache.commons:commons-lang3:$commonsLangVersion"
+    compile "org.apache.maven.shared:maven-invoker:$mavenInvokerVersion"
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    testCompile "commons-io:commons-io:$commonsIoVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
@@ -31,4 +45,7 @@ gradlePlugin {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+    }
 }
